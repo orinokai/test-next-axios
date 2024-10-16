@@ -1,7 +1,18 @@
+import axios from "axios";
+import { unstable_cache } from 'next/cache';
 import Image from "next/image";
 import styles from "./page.module.css";
 
-export default function Home() {
+const getPosts = unstable_cache(
+  async () => {
+    return await axios.get('https://eo56fq8hu017cki.m.pipedream.net')
+  },
+  ['posts'],
+  { revalidate: 30, tags: ['posts'] }
+)
+
+export default async function Home() {
+  const posts = await getPosts()
   return (
     <div className={styles.page}>
       <main className={styles.main}>
@@ -17,7 +28,7 @@ export default function Home() {
           <li>
             Get started by editing <code>app/page.tsx</code>.
           </li>
-          <li>Save and see your changes instantly.</li>
+          <li>{posts.data.info}</li>
         </ol>
 
         <div className={styles.ctas}>
